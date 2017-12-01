@@ -154,6 +154,7 @@
                               $result = $mysqli->query("select p.Patient_ID, Name, Address, DOB, Phone, Gender, Blood_Group, Days_Stayed, Companion_Name, Companion_Phone, Relationship FROM Patient as p
                                 left outer join Accompanied_by as a on p.Patient_ID = a.Patient_ID WHERE p.Patient_ID = $id");
                                 $row = $result->fetch_assoc();
+                                $days = $row["Days_Stayed"];
 
 
                               ?>
@@ -270,6 +271,7 @@
                               <?php
                               $result = $mysqli->query("select `Patient_ID`, `Test`, Test_Date, `Cost`, Doctors.Name as Doctor_Name FROM Tests, Doctors
  WHERE Tests.Patient_ID = $id AND Tests.Doctor_ID = Doctors.Doctor_ID");
+                                $totaltestcost = 0;
                                 while($row = $result->fetch_assoc()) {
                               ?>
                                 <form class="form-horizontal form-material">
@@ -309,6 +311,7 @@
                                           <?php
 
                                           echo $row["Cost"];
+                                          $totaltestcost +=$row["Cost"];
 
                                             ?>
                                         </div>
@@ -318,6 +321,12 @@
                                 <?php
                                   echo '<hr>';
                               } ?>
+                              Total Test Cost:
+                              <?php
+                              echo $totaltestcost;
+
+
+                               ?>
                             </div>
                         </div>
                     </div>
@@ -329,7 +338,9 @@
                               <br>
                               <?php
                               $result = $mysqli->query("SELECT Procedure.Name, Procedure.Cost, Doctors.Name as Doctor_Name FROM `Procedure`, Doctors WHERE Procedure.Patient_ID = $id AND Doctors.Doctor_ID = Procedure.Doctor_ID");
+                              $totalprocedurecost = 0;
                                 while($row = $result->fetch_assoc()) {
+
                               ?>
                                 <form class="form-horizontal form-material">
                                     <div class="form-group">
@@ -358,6 +369,7 @@
                                           <?php
 
                                           echo $row["Cost"];
+                                          $totalprocedurecost += $row["Cost"];
 
                                             ?>
                                         </div>
@@ -367,7 +379,14 @@
                                 </form>
                                 <?php
                                   echo '<hr>';
-                              } ?>
+                              }
+                              ?>
+                              Total Procedure Cost:
+                              <?php
+                              echo $totalprocedurecost;
+                              ?>
+
+
                             </div>
                         </div>
                     </div>
@@ -474,6 +493,56 @@
                       </div>
                   </div>
                 </div>
+
+
+
+
+
+
+
+                <div class="row">
+
+                  <div class="col-lg-6 col-md-6">
+                      <div class="card">
+                          <div class="card-block">
+                            <h3 class="text-themecolor m-b-0 m-t-0">Room Rent</h3>
+                            <br>
+                            <?php
+
+                              $result = $mysqli->query("SELECT Rent AS rent FROM `Room`");
+                              $row = $result->fetch_assoc();
+                              $totalrent = $days*$row["rent"];
+                            ?>
+                              <h4 class="card-title">Total Rent</h4>
+                              <div class="text-right">
+                                  <h2 class="font-light m-b-0"> $<?php echo $days*$row["rent"] ?></h2>
+                                  <span class="text-muted">Total Rent for <?php echo $days; ?> Days</span>
+                              </div>
+
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-lg-6 col-md-6">
+                      <div class="card">
+                          <div class="card-block">
+                            <h3 class="text-themecolor m-b-0 m-t-0">Total Charged</h3>
+                            <br>
+                              <h4 class="card-title">Total Charged</h4>
+                              <div class="text-right">
+                                  <h2 class="font-light m-b-0"> $<?php echo $totaltestcost + $totalprocedurecost + $totalrent; ?></h2>
+
+                              </div>
+
+                          </div>
+                      </div>
+                  </div>
+
+
+                </div>
+
+
+
                 <!-- Row -->
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
